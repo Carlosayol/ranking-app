@@ -4,6 +4,10 @@
   "emmet.includeLanguages": {
     "django-html": "html"
   },
+  "[django-html]": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 4
+  },
   "files.associations": {
     "**/*.html": "html",
     "**/templates/**/*.html": "django-html",
