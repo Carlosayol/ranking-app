@@ -42,7 +42,7 @@ def create_question(question_text, days):
 
 class QuestionIndexViewTests(TestCase):
     def test_no_questions(self):
-        """"If no question exist, an appropiate message is displayed"""
+        """If no question exist, an appropiate message is displayed"""
 
         response = self.client.get(reverse("polls:index"))
         self.assertEqual(response.status_code, 200)
@@ -50,7 +50,7 @@ class QuestionIndexViewTests(TestCase):
         self.assertQuerysetEqual(response.context["latest_question_list"], [])
 
     def test_future_question(self):
-        """"Question created in the future arent displayed on the index page"""
+        """Question created in the future arent displayed on the index page"""
 
         create_question("test 1", 10)
         response = self.client.get(reverse("polls:index"))
@@ -59,11 +59,32 @@ class QuestionIndexViewTests(TestCase):
         self.assertQuerysetEqual(response.context["latest_question_list"], [])
 
     def test_past_question(self):
-        """"Question created in the past are displayed on the index page"""
+        """Question created in the past are displayed on the index page"""
 
         question = create_question("test 1", -10)
         response = self.client.get(reverse("polls:index"))
         self.assertEqual(response.status_code, 200)
+        self.assertQuerysetEqual(response.context["latest_question_list"], [question])
+
+    def test_past_and_future_questions(self):
+        """Question created in the past are displayed and future questions arent displayed"""
+
+        past_question = create_question("test 1", -10)
+        future_question = create_question("test 2", 10)
+        response = self.client.get(reverse("polls:index"))
+        self.assertEqual(response.status_code, 200)
         self.assertQuerysetEqual(
-            response.context["latest_question_list"], [question]
+            response.context["latest_question_list"], [past_question]
+        )
+
+    def test_two_past_questions(self):
+        """Question created in the past are displayed on the index page"""
+
+        past_question = create_question("test 1", -10)
+        past_2_question = create_question("test 2", -10)
+
+        response = self.client.get(reverse("polls:index"))
+        self.assertEqual(response.status_code, 200)
+        self.assertQuerysetEqual(
+            response.context["latest_question_list"], [past_question, past_2_question]
         )

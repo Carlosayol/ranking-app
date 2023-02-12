@@ -12,7 +12,11 @@ class Question(models.Model):
         return self.question_text
 
     def was_created_recently(self):
-        return timezone.now() >= self.created_at >= timezone.now() - datetime.timedelta(days=1)
+        return (
+            timezone.now()
+            >= self.created_at
+            >= timezone.now() - datetime.timedelta(days=1)
+        )
 
 
 class Choice(models.Model):
