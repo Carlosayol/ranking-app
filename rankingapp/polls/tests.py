@@ -33,6 +33,13 @@ class QuestionModelTests(TestCase):
         self.assertIs(future_question.was_created_recently(), True)
 
 
+def create_question(question_text, days):
+    """Create a question with the given question_text and days for testing purposes"""
+
+    time = timezone.now() + datetime.timedelta(days=days)
+    return Question.objects.create(question_text=question_text, created_at=time)
+
+
 class QuestionIndexViewTests(TestCase):
     def test_no_questions(self):
         """"If no question exist, an appropiate message is displayed"""
@@ -41,3 +48,22 @@ class QuestionIndexViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "No polls are available.")
         self.assertQuerysetEqual(response.context["latest_question_list"], [])
+
+    def test_future_question(self):
+        """"Question created in the future arent displayed on the index page"""
+
+        create_question("test 1", 10)
+        response = self.client.get(reverse("polls:index"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "No polls are available.")
+        self.assertQuerysetEqual(response.context["latest_question_list"], [])
+
+    def test_past_question(self):
+        """"Question created in the past are displayed on the index page"""
+
+        question = create_question("test 1", -10)
+        response = self.client.get(reverse("polls:index"))
+        self.assertEqual(response.status_code, 200)
+        self.assertQuerysetEqual(
+            response.context["latest_question_list"], [question]
+        )
