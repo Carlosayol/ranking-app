@@ -16,5 +16,12 @@
   },
   "beautify.language": {
     "html": ["htm", "html", "django-html"]
+  },
+  "python.autoComplete.extraPaths": [
+    "/opt/homebrew/Caskroom/miniforge/base/envs/myenv/lib/python3.8/site-packages/mylib"
+  ],
+  "python.analysis.extraPaths": ["/opt/homebrew/Caskroom/miniforge/base/envs/myenv/lib/python3.8/site-packages/mylib"],
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter"
   }
 }
