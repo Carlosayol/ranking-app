@@ -1,0 +1,3 @@
+# ranking-app
+
+Django Project
